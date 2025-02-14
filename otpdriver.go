@@ -14,27 +14,27 @@ type googleOTP struct {
 	googleAuth *dgoogauth.OTPConfig
 }
 
-func (driver *googleOTP) Validate(code string) (bool, error) {
-	return driver.googleAuth.Authenticate(code)
+func (g *googleOTP) Validate(code string) (bool, error) {
+	return g.googleAuth.Authenticate(code)
 }
 
-func (driver *googleOTP) RAW() (string, error) {
-	URL, err := url.Parse("otpauth://totp/" + url.PathEscape(driver.username))
+func (g *googleOTP) RAW() (string, error) {
+	URL, err := url.Parse("otpauth://totp/" + url.PathEscape(g.username))
 	if err != nil {
 		return "", err
 	}
 
 	params := url.Values{}
-	params.Add("secret", driver.secret)
-	params.Add("issuer", driver.issuer)
+	params.Add("secret", g.secret)
+	params.Add("issuer", g.issuer)
 	params.Add("digits", "6")
 
 	URL.RawQuery = params.Encode()
 	return URL.String(), nil
 }
 
-func (driver *googleOTP) QR() ([]byte, error) {
-	raw, err := driver.RAW()
+func (g *googleOTP) QR() ([]byte, error) {
+	raw, err := g.RAW()
 	if err != nil {
 		return nil, err
 	}
